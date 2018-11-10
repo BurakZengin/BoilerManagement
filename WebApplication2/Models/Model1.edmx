@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="GatesCorpModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Arduino">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="deviceID" Type="int" />
+          <Property Name="waterLevel" Type="int" />
+          <Property Name="date" Type="varchar" MaxLength="50" />
+          <Property Name="time" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="device">
+          <Key>
+            <PropertyRef Name="deviceID" />
+          </Key>
+          <Property Name="deviceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="deviceName" Type="varchar" MaxLength="50" />
+          <Property Name="deviceIp" Type="varchar" MaxLength="50" />
+          <Property Name="wifiName" Type="varchar" MaxLength="50" />
+          <Property Name="wifiPassword" Type="varchar" MaxLength="50" />
+          <Property Name="subject" Type="varchar" MaxLength="300" />
+          <Property Name="message" Type="varchar" MaxLength="300" />
+          <Property Name="mailAddress" Type="varchar" MaxLength="100" />
+          <Property Name="mailPassword" Type="varchar" MaxLength="100" />
+          <Property Name="status" Type="varchar" MaxLength="100" />
+          <Property Name="waterLevel" Type="varchar" MaxLength="100" />
+          <Property Name="frequency" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="member">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="deviceID" Type="int" />
+          <Property Name="member1" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityContainer Name="GatesCorpModelStoreContainer">
+          <EntitySet Name="Arduino" EntityType="Self.Arduino" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="device" EntityType="Self.device" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="member" EntityType="Self.member" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="GatesCorpModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="GatesCorpEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="member" EntityType="GatesCorpModel.member" />
+          <EntitySet Name="device" EntityType="GatesCorpModel.device" />
+          <EntitySet Name="Arduino" EntityType="GatesCorpModel.Arduino" />
+        </EntityContainer>
+        <EntityType Name="member">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="deviceID" Type="Int32" />
+          <Property Name="member1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="device">
+          <Key>
+            <PropertyRef Name="deviceID" />
+          </Key>
+          <Property Name="deviceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="deviceName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="deviceIp" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="wifiName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="wifiPassword" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="subject" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="message" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="mailAddress" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="mailPassword" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="waterLevel" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="frequency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Arduino">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="deviceID" Type="Int32" />
+          <Property Name="waterLevel" Type="Int32" />
+          <Property Name="time" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="date" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="GatesCorpModelStoreContainer" CdmEntityContainer="GatesCorpEntities">
+    <EntitySetMapping Name="member">
+      <EntityTypeMapping TypeName="IsTypeOf(GatesCorpModel.member)">
+        <MappingFragment StoreEntitySet="member">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="deviceID" ColumnName="deviceID" />
+          <ScalarProperty Name="member1" ColumnName="member1" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="device">
+      <EntityTypeMapping TypeName="IsTypeOf(GatesCorpModel.device)">
+        <MappingFragment StoreEntitySet="device">
+          <ScalarProperty Name="frequency" ColumnName="frequency" />
+                <ScalarProperty Name="waterLevel" ColumnName="waterLevel" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="mailPassword" ColumnName="mailPassword" />
+                <ScalarProperty Name="mailAddress" ColumnName="mailAddress" />
+                <ScalarProperty Name="deviceID" ColumnName="deviceID" />
+          <ScalarProperty Name="deviceName" ColumnName="deviceName" />
+          <ScalarProperty Name="deviceIp" ColumnName="deviceIp" />
+          <ScalarProperty Name="wifiName" ColumnName="wifiName" />
+          <ScalarProperty Name="wifiPassword" ColumnName="wifiPassword" />
+          <ScalarProperty Name="subject" ColumnName="subject" />
+          <ScalarProperty Name="message" ColumnName="message" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Arduino">
+      <EntityTypeMapping TypeName="IsTypeOf(GatesCorpModel.Arduino)">
+        <MappingFragment StoreEntitySet="Arduino">
+          <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="deviceID" ColumnName="deviceID" />
+          <ScalarProperty Name="waterLevel" ColumnName="waterLevel" />
+          <ScalarProperty Name="time" ColumnName="time" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,500 @@
+﻿@model IEnumerable<object>
+@{
+    List<GatesProject.Models.device> deviceInfo = Model.ToList()[0] as List<GatesProject.Models.device>;
+    List<GatesProject.Models.member> member = Model.ToList()[1] as List<GatesProject.Models.member>;
+    List<GatesProject.Models.Arduino> arduinos = Model.ToList()[2] as List<GatesProject.Models.Arduino>;
+    ViewBag.Title = "Home Page";
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <title>Management Portal</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 40%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+    </style>
+    <script>
+
+        function popup() {
+            var modal = document.getElementById('myModal');
+            // Get the button that opens the modal
+            var span = document.getElementsByClassName("close")[0];
+            modal.style.display = "block";
+            // When the user clicks on <span> (x), close the modal
+        }
+
+        function popup2() {
+            var modal = document.getElementById('generateCode');
+            // Get the button that opens the modal
+            var span = document.getElementsByClassName("close")[0];
+            modal.style.display = "block";
+            // When the user clicks on <span> (x), close the modal
+        }
+
+        function popup3() {
+            var modal = document.getElementById('removeDevice');
+            // Get the button that opens the modal
+            var span = document.getElementsByClassName("close")[0];
+            modal.style.display = "block";
+            // When the user clicks on <span> (x), close the modal
+        }
+
+        function spann() {
+            var modal = document.getElementById('myModal');
+            modal.style.display = "none";
+        }
+
+        function spann2() {
+            var modal = document.getElementById('generateCode');
+            modal.style.display = "none";
+        }
+
+        function spann3() {
+            var modal = document.getElementById('removeDevice');
+            modal.style.display = "none";
+        }
+
+        function copyGeneratedCode() {
+            var copyText = document.getElementById("code");
+            copyText.select();
+            document.execCommand("copy");
+        }
+
+        function selectedBoiler() {
+            var e = document.getElementById("selectedDevice");
+            var ide = e.options[e.selectedIndex].value;
+            var id = document.getElementById("selectedDevice").selectedIndex;
+            var log = document.getElementsByName(ide + "-log");
+            var i = 0;
+            var logs = "";
+            for (i = 0; i < log.length; i++) {
+                logs += "\n" + log[i].value;
+            }
+            document.getElementById("log").value = logs.trim();
+            document.getElementById("mailPassword").value = document.getElementById("mailPassword_" + id).value;
+            document.getElementById("mailAddress").value = document.getElementById("mailAddress_" + id).value;
+            document.getElementById("deviceName").value = document.getElementById("deviceName_" + id).value;
+            document.getElementById("deviceWifi").value = document.getElementById("deviceWifi_" + id).value;
+            document.getElementById("devicePassword").value = document.getElementById("devicePassword_" + id).value;
+            document.getElementById("deviceIp").value = document.getElementById("deviceIp_" + id).value;
+            document.getElementById("deviceInfoSubmitFormId").value = document.getElementById("deviceID_" + id).value;
+            document.getElementById("removeDeviceInput").value = document.getElementById("deviceID_" + id).value;
+            document.getElementById("subject").value = document.getElementById("subject_" + id).value;
+            document.getElementById("message").value = document.getElementById("message_" + id).value;
+            document.getElementById("level").value = document.getElementById("level_" + id).value;
+            document.getElementById("frequency").value = document.getElementById("frequency_" + id).value;
+            document.getElementById("status").innerText = "Status : " + document.getElementById("status_" + id).value;
+            if (document.getElementById("status_" + id).value == "STOPED") {
+                document.getElementById("status").setAttribute('class', 'btn btn-danger my-2 my-sm-0');
+            } else {
+                document.getElementById("status").setAttribute('class', 'btn btn-success my-2 my-sm-0');
+            }
+            
+        }
+
+        function list() {
+            var e = document.getElementById("selectedDevice");
+            var id = e.options[e.selectedIndex].value + "m";
+            var a = document.getElementsByName(id);
+            var i = 0;
+            var str = "";
+            for (i = 0; i < a.length; i++) {
+                str += a[i].value + "-";
+            }
+
+            document.getElementById("selectedBoiler").value = parseInt(id);
+            document.getElementById("listMember").value = str;
+            //alert(document.getElementById("listMember").value);
+            document.getElementById("memberSave").setAttribute('type', 'submit');
+            document.getElementById('memberSave').click();
+        }
+
+        function removeMember(id) {
+            var str = "#member" + id;
+            $(str).remove();
+        }
+
+        function addMore(id) {
+            var e = document.getElementById("selectedDevice");
+            var ide = e.options[e.selectedIndex].value;
+            document.getElementById(id).setAttribute('class', 'btn btn-danger');
+            document.getElementById(id).innerHTML = "-";
+            document.getElementById(id).setAttribute('onclick', 'removeMember(' + id++ + ')');
+            $('<div class="form-group row" id="member' + id + '">\
+                                                              <label for="inputEmail3" class="col-sm-2 col-form-label">Member</label>\
+                                                              <div class="col-md-9">\
+                                                                 <input type="email" name="'+ ide + 'm" class="form-control" placeholder="E-mail" value="">\
+                                                              </div>\
+                                                              <div class="col-sm-1">\
+                                                                 <button onclick="addMore(this.id);" id="'+ id + '" type="button" style="width:50px;" class="btn btn-success">+</button>\
+                                                              </div>\
+                                                           </div>').appendTo("#members");
+        }
+
+        function getMembers() {
+            selectedBoiler();
+            $("#members").html("");
+            var e = document.getElementById("selectedDevice");
+            var id = e.options[e.selectedIndex].value;
+            var i = 0;
+            var a = document.getElementsByName(id);
+
+
+            for (i = 0; i < a.length; i++) {
+                //alert(a[i].value);
+                if (a.length - 1 == i) {
+                    $('<div class="form-group row" id="member' + i + '">\
+                                                                          <label for="inputEmail3" class="col-sm-2 col-form-label">Member</label>\
+                                                                          <div class="col-md-9">\
+                                                                            <input type="email" name="'+ id + 'm" class="form-control" placeholder="E-mail" value="' + a[i].value + '">\
+                                                                          </div>\
+                                                                          <div class="col-sm-1">\
+                                                                            <button onclick="addMore(this.id);" id="'+ i + '" type="button" style="width:50px;" class="btn btn-success">+</button>\
+                                                                          </div>\
+                                                                        </div>').appendTo("#members");
+
+                } else {
+                    $('<div class="form-group row" id="member' + i + '">\
+                                                                          <label for="inputEmail3" class="col-sm-2 col-form-label">Member</label>\
+                                                                          <div class="col-md-9">\
+                                                                            <input type="email" name="'+ id + 'm" class="form-control" placeholder="E-mail" value="' + a[i].value + '">\
+                                                                          </div>\
+                                                                          <div class="col-sm-1">\
+                                                                            <button onclick="removeMember(this.id);" id="'+ i + '" type="button" style="width:50px;" class="btn btn-danger">-</button>\
+                                                                          </div>\
+                                                                        </div>').appendTo("#members");
+                }
+            }
+
+        }
+    </script>
+</head>
+
+
+<body onload="getMembers();">
+
+    @if (member != null)
+    {
+        int i = 1;
+        foreach (var item in member)
+        {
+            <input type="hidden" name="@item.deviceID" value="@item.member1">
+            i++;
+        }
+    }
+
+    @if (arduinos != null)
+    {
+        var dist = arduinos.Select(x => x.deviceID).Distinct();
+        foreach (var item in dist)
+        {
+            var temp = arduinos.FindAll(s => s.deviceID.Equals(item)).OrderByDescending(x => DateTime.ParseExact(x.date, "dd/MM/yyyy", null)).ThenByDescending(x => DateTime.ParseExact(x.time, "hh:mm:ss", null)).Take(12);
+            foreach (var item2 in temp)
+            {
+                <input type="hidden" name="@item2.deviceID-log" value="Water Level : @item2.waterLevel       Date & Time : @item2.date  -  @item2.time">
+            }
+        }
+    }
+
+    @if (deviceInfo != null)
+    {
+        int i = 0;
+        foreach (var item in deviceInfo)
+        {
+            <input type="hidden" id="deviceID_@i" value="@item.deviceID">
+            <input type="hidden" id="deviceName_@i" value="@item.deviceName">
+            <input type="hidden" id="deviceWifi_@i" value="@item.wifiName">
+            <input type="hidden" id="devicePassword_@i" value="@item.wifiPassword">
+            <input type="hidden" id="deviceIp_@i" value="@item.deviceIp">
+            <input type="hidden" id="subject_@i" value="@item.subject">
+            <input type="hidden" id="message_@i" value="@item.message">
+            <input type="hidden" id="mailAddress_@i" value="@item.mailAddress">
+            <input type="hidden" id="mailPassword_@i" value="@item.mailPassword">
+            <input type="hidden" id="status_@i" value="@item.status">
+            <input type="hidden" id="level_@i" value="@item.waterLevel">
+            <input type="hidden" id="frequency_@i" value="@item.frequency">
+            i++;
+        }
+    }
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span onclick="spann();" class="close">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 5%;">Create A New Device</h2>
+            @using (Html.BeginForm("AddDevice", "Home"))
+            {
+                <div class="form-group row" style="margin-left: auto; margin-right: auto;">
+                    <div class="col-md-2"></div>
+                    <label class="col-md-3 col-form-label">Device Name</label>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" name="deviceName" placeholder="Device Name">
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                <div class="form-group row" style="margin-left: auto; margin-right: auto;">
+                    <div class="col-md-2"></div>
+                    <label class="col-md-3 col-form-label">Wifi Name</label>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" name="wifiName" placeholder="Wifi Name">
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                <div class="form-group row" style="margin-left: auto; margin-right: auto;">
+                    <div class="col-md-2"></div>
+                    <label class="col-md-3 col-form-label">Wifi Password</label>
+                    <div class="col-md-5">
+                        <input type="password" class="form-control" name="wifiPassword" placeholder="Wifi Password">
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                <div class="form-group row" style="margin-top: 5%;">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-success" style="width: 80%;">Create</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="generateCode" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span onclick="spann2();" class="close">&times;</span>
+            <h3 style="text-align: center;">Code Generated For Arduino</h3>
+            <div class="form-group row" style="margin-top: 5%;">
+                <div class="col-md-12">
+                    <textarea type="text" class="form-control" id="code" style="width: 100%; height: 400px; resize: none;" placeholder="Generated Code"></textarea>
+                </div>
+            </div>
+            <div class="form-group row" style="margin-left: auto; margin-right: auto; margin-top: 5%;">
+                <button type="button" class="btn btn-primary" onclick="copyGeneratedCode();" style="width: 100%;">Copy Text to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="removeDevice" class="modal">
+        <!-- Modal content -->
+
+        <div class="modal-content">
+
+            <span onclick="spann3();" class="close">&times;</span>
+            <h4 style="text-align: center;">Are You Sure You Want To Remove This Device?</h4>
+            @using (Html.BeginForm("RemoveDevice", "Home"))
+            {
+                <div class="form-group row" style="margin-top: 5%; margin-left: 25%;">
+                    <button type="button" class="btn btn-danger" onclick="spann3();" style="width: 25%; margin-right: 10%">Cancel</button>
+                    <button type="submit" class="btn btn-success" style="width: 25%;">Yes</button>
+                    <input type="hidden" name="deviceId" id="removeDeviceInput" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">
+            <img src="~/Images/logoWeb.png" width="80" height="42" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Seleceted Device <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <select class="form-control" style="margin-left: 6%;" onchange="getMembers();" id="selectedDevice">
+                        @if (deviceInfo != null)
+                        {
+                            List<string> deviceList = new List<string>();
+                            foreach (var item in deviceInfo)
+                            {
+                                if (!deviceList.Contains(item.deviceName))
+                                {
+                                    deviceList.Add(item.deviceName);
+                                    <option value="@item.deviceID">@item.deviceName</option>
+                                }
+                            }
+                        }
+                    </select>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+
+                <button class="btn btn-outline-danger my-2 my-sm-0" onclick="popup3();" style="margin-right: 10px;" type="button">Remove This Device</button>
+                <button class="btn btn-outline-success my-2 my-sm-0" onclick="popup();" style="margin-right: 10px;" type="button">Add More Device</button>
+                <button class="btn btn-outline-primary my-2 my-sm-0" onclick="popup2();" type="button">Generate Code</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="row" style="margin-top: 6%;">
+        <div class="col-md-6">
+            <button class="btn btn-success my-2 my-sm-0" style="position: absolute; text-align: right; left: 94%;" id="status" type="button"></button>
+            <h2 style="text-align: center;">Settings</h2>
+
+            <div class="row" style="margin-top: 1%;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    @using (Html.BeginForm("UpdateMember", "Home"))
+                    {
+                        <form id="memberForm">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <h4 for="inputEmail4"></h4>
+                                </div>
+                            </div>
+
+                            <div id="members"></div>
+                            <div class="form-row" style="margin-top: 7%;">
+                                <div class="form-group col-md-12">
+                                    <h2 style="text-align: center;">Mail Settings</h2>
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12" style="margin-left: 2%;">
+                                <div class="col-md-8">
+                                    <input type="email" class="form-control" name="mailAddress" id="mailAddress" placeholder="Mail Address">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="password" class="form-control" name="mailPassword" id="mailPassword" placeholder="Mail Password">
+                                </div>
+                            </div>
+
+                            <div class="form-group row col-md-12" style="margin-left: 2%;">
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12" style="margin-left: 2%;">
+                                <div class="col-md-12">
+                                    <textarea class="form-control" rows="6" style="resize: none;" id="message" name="message" min-height: 150px;" placeholder="Message"></textarea>
+                                </div>
+                            </div>
+                            <p style="margin-left: 9%;"><em>Note: Mail address  must be a gmail account and Let less secure apps access your account. Check it <a href="https://support.google.com/accounts/answer/6010255?hl=en" target="blank">web site.</a></em></p>
+                            <input hidden id="listMember" name="listMember" />
+                            <input hidden type="number" id="selectedBoiler" name="selectedBoilerID" />
+                            <div class="form-group row">
+                                <div class="col-md-5"></div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-success" id="memberSave" onclick="list();" style="width: 50%;">Save</button>
+                                </div>
+                                <div class="col-md-3"></div>
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2 style="text-align: center;">Logs</h2>
+            <div class="row" style="margin-top: 3%;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <textarea readonly id="log" class="form-control" rows="12" style="resize: none; min-width: 100%;"></textarea>
+                    </div>
+                    @using (Html.BeginForm("UpdateDeviceInfo", "Home"))
+                    {
+                        <input type="hidden" name="deviceId" id="deviceInfoSubmitFormId">
+
+                        <h2 style="text-align: center; margin-top: 7%; margin-bottom: 3%;">Device Info</h2>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">Device Name</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" name="deviceName" id="deviceName" placeholder="Device Name">
+                            </div>
+                            <label class="col-md-2 col-form-label">Device IP</label>
+                            <div class="col-md-3">
+                                <input readonly type="text" class="form-control" name="deviceIp" id="deviceIp" placeholder="Device IP">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">Wifi Name</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" name="deviceWifi" id="deviceWifi" placeholder="Wifi Name">
+                            </div>
+                            <label class="col-md-2 col-form-label">Password</label>
+                            <div class="col-md-3">
+                                <input type="password" class="form-control" name="devicePassword" id="devicePassword" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label">Water Level</label>
+                            <div class="col-md-3">
+                                <input type="number" class="form-control" name="level" id="level" placeholder="Water Level">
+                            </div>
+                            <label class="col-md-3 col-form-label">Data Frequency</label>
+                            <div class="col-md-3">
+                                <input type="number" class="form-control" name="frequency" id="frequency" placeholder="60">
+                            </div>
+                        </div>
+                        <div class="form-group row" style="margin-top: 5%;">
+                            <div class="col-md-5"></div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-success" style="width: 50%;">Save</button>
+                            </div>
+                            <div class="col-md-3"></div>
+                        </div>
+
+                    }
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+
+</body>
+</html>
